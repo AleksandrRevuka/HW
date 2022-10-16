@@ -24,7 +24,6 @@ def encode_message(filtered_message: str, keys_table: dict[str, tuple[str]]):
     for symbol in filtered_message:
         if symbol in keys_table:
             encoded_message += keys_table[symbol]
-    print(encoded_message)
     return encoded_message
 
 
