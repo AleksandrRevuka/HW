@@ -63,7 +63,7 @@ def main(keys_table: dict[str, tuple[str]], valid_characters: list):
         main(keys_table, valid_characters)
     elif user_choice == 'd':
         print('You need to enter each character of the word through "_", '
-              'for example "44_33_555_555_666_11_0_9_666_777_555_3_1111": ')
+              'for example "44_33_555_555_666_11_0_9_666_777_555_3_1111_": ')
         user_message = input('Enter you message for decode: ')
         filtered_message_decode = filter_message_for_decode(user_message, valid_characters)
         decoded_message = decode_message(filtered_message_decode, keys_table)
@@ -91,5 +91,4 @@ if __name__ == '__main__':
     }
     box_valid_characters = ['_', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
     phone_mapping_keys = make_phone_map_keys(phone_keys_table)
-    print(phone_mapping_keys)
     main(phone_mapping_keys, box_valid_characters)
