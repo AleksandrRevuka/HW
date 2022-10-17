@@ -13,6 +13,15 @@ def check_type_exist(filename: str):
     return False
 
 
+def check_input_int(data: str):
+    """Check input has int type"""
+    try:
+        int(data)
+    except ValueError as error:
+        return exit(print(error))
+    return True
+
+
 def check_symbol(symbol: str):
     """Check symbol"""
     symbol.isalpha()
@@ -69,6 +78,14 @@ def encode_txt_file(encode_file, alphabet: list, shift_alphabet: list):
     print('Encode file "encoded_file.txt" successful')
 
 
+def branch_decode_file(decode_file, alphabet: list):
+    shift = input('With what shift do you decode the text in the file? :')
+    check_input = check_input_int(shift)
+    if check_input:
+        shift_alphabet = encode_alphabet(alphabet, int(shift))
+        decode_txt_file(decode_file, alphabet, shift_alphabet)
+
+
 def decode_line(line: str, alphabet: list, shift_alphabet: list):
     """Decode line"""
     code_line = ''
@@ -93,6 +110,14 @@ def decode_txt_file(decode_file, alphabet: list, shift_alphabet: list):
     print('Decode file "decoded_file.txt" successful')
 
 
+def branch_encode_file(encode_file, alphabet: list):
+    shift = input('With what shift do you encode the text in the file? :')
+    check_input = check_input_int(shift)
+    if check_input:
+        shift_alphabet = encode_alphabet(alphabet, int(shift))
+        encode_txt_file(encode_file, alphabet, shift_alphabet)
+
+
 def main(encode_file, alphabet_file, decode_file):
     """Main controller"""
     check_encode_file = check_type_exist(encode_file)
@@ -104,17 +129,14 @@ def main(encode_file, alphabet_file, decode_file):
     alphabet = make_alphabet(alphabet_file)
     user_choice = input("What do you want? encode or decode e/d ('' - exit): ")
     if user_choice == 'e':
-        shift = int(input('With what shift do we encode the text in the file? :'))
-        shift_alphabet = encode_alphabet(alphabet, shift)
-        encode_txt_file(encode_file, alphabet, shift_alphabet)
+        branch_encode_file(encode_file, alphabet)
     elif user_choice == 'd':
-        shift = int(input('With what shift do we decode the text in the file? :'))
-        shift_alphabet = encode_alphabet(alphabet, shift)
-        decode_txt_file(decode_file, alphabet, shift_alphabet)
+        branch_decode_file(decode_file, alphabet)
     elif user_choice == '':
         exit('Good bye')
     else:
         print(ValueError)
+        main(file_encode, file_alphabet, file_decode)
 
 
 if __name__ == '__main__':
