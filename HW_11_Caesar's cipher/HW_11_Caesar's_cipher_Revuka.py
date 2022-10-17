@@ -94,6 +94,7 @@ def decode_txt_file(decode_file, alphabet: list, shift_alphabet: list):
 
 
 def main(encode_file, alphabet_file, decode_file):
+    """Main controller"""
     check_encode_file = check_type_exist(encode_file)
     if check_encode_file:
         exit(print(check_encode_file))
@@ -101,7 +102,7 @@ def main(encode_file, alphabet_file, decode_file):
     if check_alphabet_file:
         exit(print(check_alphabet_file))
     alphabet = make_alphabet(alphabet_file)
-    user_choice = input("What do you want? encode or decode e/d ('': exit): ")
+    user_choice = input("What do you want? encode or decode e/d ('' - exit): ")
     if user_choice == 'e':
         shift = int(input('With what shift do we encode the text in the file? :'))
         shift_alphabet = encode_alphabet(alphabet, shift)
@@ -112,6 +113,8 @@ def main(encode_file, alphabet_file, decode_file):
         decode_txt_file(decode_file, alphabet, shift_alphabet)
     elif user_choice == '':
         exit('Good bye')
+    else:
+        print(ValueError)
 
 
 if __name__ == '__main__':
