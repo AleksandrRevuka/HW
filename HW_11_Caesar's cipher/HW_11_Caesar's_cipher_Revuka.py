@@ -101,7 +101,6 @@ def main(encode_file, alphabet_file, decode_file):
     if check_alphabet_file:
         exit(print(check_alphabet_file))
     alphabet = make_alphabet(alphabet_file)
-    print(alphabet)
     user_choice = input("What do you want? encode or decode e/d ('': exit): ")
     if user_choice == 'e':
         shift = int(input('With what shift do we encode the text in the file? :'))
