@@ -59,6 +59,7 @@ def encode_line(line: str, alphabet: list, shift_alphabet):
 
 
 def encode_txt_file(encode_file, alphabet: list, shift_alphabet: list):
+    """Encode file and writ result to file"""
     file_encoded = open('encoded_file.txt', 'w')
     with open(encode_file) as file:
         for line in file:
