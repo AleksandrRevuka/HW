@@ -79,6 +79,7 @@ def encode_txt_file(encode_file, alphabet: list, shift_alphabet: list):
 
 
 def branch_decode_file(decode_file, alphabet: list):
+    """branch responsible for text decoding"""
     shift = input('With what shift do you decode the text in the file? :')
     check_input = check_input_int(shift)
     if check_input:
@@ -111,6 +112,7 @@ def decode_txt_file(decode_file, alphabet: list, shift_alphabet: list):
 
 
 def branch_encode_file(encode_file, alphabet: list):
+    """branch responsible for text encoding"""
     shift = input('With what shift do you encode the text in the file? :')
     check_input = check_input_int(shift)
     if check_input:
