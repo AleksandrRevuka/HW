@@ -78,13 +78,13 @@ def encode_txt_file(encode_file, alphabet: list, shift_alphabet: list):
     print('Encode file "encoded_file.txt" successful')
 
 
-def branch_decode_file(decode_file, alphabet: list):
-    """branch responsible for text decoding"""
-    shift = input('With what shift do you decode the text in the file? :')
+def branch_encode_file(encode_file, alphabet: list):
+    """branch responsible for text encoding"""
+    shift = input('With what shift do you encode the text in the file? :')
     check_input = check_input_int(shift)
     if check_input:
         shift_alphabet = encode_alphabet(alphabet, int(shift))
-        decode_txt_file(decode_file, alphabet, shift_alphabet)
+        encode_txt_file(encode_file, alphabet, shift_alphabet)
 
 
 def decode_line(line: str, alphabet: list, shift_alphabet: list):
@@ -111,13 +111,13 @@ def decode_txt_file(decode_file, alphabet: list, shift_alphabet: list):
     print('Decode file "decoded_file.txt" successful')
 
 
-def branch_encode_file(encode_file, alphabet: list):
-    """branch responsible for text encoding"""
-    shift = input('With what shift do you encode the text in the file? :')
+def branch_decode_file(decode_file, alphabet: list):
+    """branch responsible for text decoding"""
+    shift = input('With what shift do you decode the text in the file? :')
     check_input = check_input_int(shift)
     if check_input:
         shift_alphabet = encode_alphabet(alphabet, int(shift))
-        encode_txt_file(encode_file, alphabet, shift_alphabet)
+        decode_txt_file(decode_file, alphabet, shift_alphabet)
 
 
 def main(encode_file, alphabet_file, decode_file):
