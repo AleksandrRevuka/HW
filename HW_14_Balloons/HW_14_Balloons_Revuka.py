@@ -14,32 +14,27 @@ class Sprite(Turtle, metaclass=ABCMeta):
 
 class BallData(NamedTuple):
     """Ball DTO"""
-    planet_size: tuple[float, float]
-    planet_color: str | tuple[float, float, float]
+    ball_size: tuple[float, float]
+    ball_color: str | tuple[float, float, float]
+    ball_name: str
 
 
 class Ball(Sprite):
     """Ball class"""
-    def __init__(self, obj,):
+    def __init__(self, obj):
         Sprite.__init__(self)
-        self.name = obj.name
+        self.name = obj.ball_name
         self.speed(0)
-        self.shapesize(*obj.planet_size)
-        self.x = random()
-        self.y = random()
-        self.color(self.generate_color())
+        self.shapesize(*obj.ball_size)
+        self.x = 0
+        self.y = 0
+        self.color = obj.ball_color
         self.up()
-        self.angle = 0
 
-    # def move(self):
-    #     self.x = self.radius * cos(self.angle)
-    #     self.y = self.radius * sin(self.angle)
-    #     self.goto(self.star.xcor() + self.x, self.star.ycor() + self.y)
-    #     self.angle += self.increase_angle
-
-    @staticmethod
-    def generate_color():
-        return random(), random(), random()
+    def move(self):
+        self.goto(self.obj.cor() + self.x, self.y)
+        self.x += 1
+        self.y += 1
 
 
 SCREEN_WIDTH = 600
@@ -58,34 +53,44 @@ def make_window():
     return screen
 
 
-def make_planets_data():
+def make_balls_data():
     """Planet data"""
-    ball_1 = BallData((1, 1), 'grey')
-    ball_2 = BallData((1, 1), 'yellow')
+    ball_1 = BallData((1, 1), 'grey', 'ball_1')
+    ball_2 = BallData((1, 1), 'yellow', 'ball_2')
 
-    stars_data = {
-        'mercury': ball_1,
-        'venus': ball_2,
+    balls_data = {
+        'ball_1': ball_1,
+        'ball_2': ball_2,
     }
-    return stars_data
+    return balls_data
 
 
-def make_planets():
-    """Make planets of solar system"""
-    planets_data = make_planets_data()
-    ball_1 = Ball(planets_data['ball_1'], sun)
-    ball_2 = Ball(planets_data['ball_2'], sun)
-    balls = [ball_1, ball_2]
-    return balls
+def make_balls():
+    """Make balls"""
+    balls_data = make_balls_data()
+    ball_1 = Ball(balls_data['ball_1'])
+    ball_2 = Ball(balls_data['ball_2'])
+    balls_box = [ball_1, ball_2]
+    return balls_box
+
+
+def move_objects(objects):
+    """Move planets and asteroids"""
+    for obj in objects:
+        obj.move()
 
 
 def mainloop():
     """Mainloop of Ball chaos app"""
     while True:
         window.update()
+        move_objects(balls)
         time.sleep(0.01)
 
 
 if __name__ == '__main__':
     window = make_window()
+    balls = make_balls()
+    print(balls)
     mainloop()
+
