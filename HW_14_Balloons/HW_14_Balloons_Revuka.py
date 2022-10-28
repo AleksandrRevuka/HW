@@ -58,6 +58,27 @@ def make_window():
     return screen
 
 
+def make_planets_data():
+    """Planet data"""
+    mercury = BallData((0.5, 0.5), 'grey')
+    venus = BallData((0.8, 0.8), 'yellow')
+
+    stars_data = {
+        'mercury': mercury,
+        'venus': venus,
+    }
+    return stars_data
+
+
+def make_planets():
+    """Make planets of solar system"""
+    planets_data = make_planets_data()
+    mercury = Ball(planets_data['mercury'], sun)
+    venus = Ball(planets_data['venus'], sun)
+    planets = [mercury, venus]
+    return planets
+
+
 def mainloop():
     """Mainloop of Ball chaos app"""
     while True:
