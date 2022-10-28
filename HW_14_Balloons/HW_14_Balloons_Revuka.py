@@ -60,12 +60,12 @@ def make_window():
 
 def make_planets_data():
     """Planet data"""
-    mercury = BallData((0.5, 0.5), 'grey')
-    venus = BallData((0.8, 0.8), 'yellow')
+    ball_1 = BallData((1, 1), 'grey')
+    ball_2 = BallData((1, 1), 'yellow')
 
     stars_data = {
-        'mercury': mercury,
-        'venus': venus,
+        'mercury': ball_1,
+        'venus': ball_2,
     }
     return stars_data
 
@@ -73,10 +73,10 @@ def make_planets_data():
 def make_planets():
     """Make planets of solar system"""
     planets_data = make_planets_data()
-    mercury = Ball(planets_data['mercury'], sun)
-    venus = Ball(planets_data['venus'], sun)
-    planets = [mercury, venus]
-    return planets
+    ball_1 = Ball(planets_data['ball_1'], sun)
+    ball_2 = Ball(planets_data['ball_2'], sun)
+    balls = [ball_1, ball_2]
+    return balls
 
 
 def mainloop():
