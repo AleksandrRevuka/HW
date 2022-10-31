@@ -1,103 +1,138 @@
 """Ball chaos"""
 from turtle import *
 from abc import ABCMeta, abstractmethod
-from time import sleep
-from random import randint, random
+from typing import NamedTuple
+import time
+from random import randint
+
+
+class BallData(NamedTuple):
+    """Ball DTO"""
+    ball_size: tuple[float, float]
+    ball_color: str
+    ball_name: str
 
 
 class Sprite(Turtle, metaclass=ABCMeta):
     """Base sprite"""
     @abstractmethod
     def __init__(self):
-        super().__init__(shape='circle')
-        self.hideturtle()
-        self.up()
-
-
-class Window:
-    """Make window """
-    SCREEN_WIDTH = 800
-    SCREEN_HEIGHT = 600
-    SCREEN_WIDTH_HALF = SCREEN_WIDTH // 2
-    SCREEN_HEIGHT_HALF = SCREEN_HEIGHT // 2
-
-    def __init__(self, screen_title: str = 'Ball chaos'):
-        self.canvas = Screen()
-        self.canvas.title(screen_title)
-        self.canvas.bgcolor('black')
-        self.canvas.setup(self.SCREEN_WIDTH, Window.SCREEN_HEIGHT)
-        self.canvas.onkey(self.canvas.bye, 'Escape')
-        self.canvas.listen()
-        self.canvas.tracer(0)
+        Turtle.__init__(self, shape='circle')
 
 
 class Ball(Sprite):
     """Ball class"""
-    size = 20
-
-    def __init__(self):
+    def __init__(self, obj):
         Sprite.__init__(self)
+        self.name = obj.ball_name
         self.speed(0)
+        self.shapesize(*obj.ball_size)
         self.seth(randint(0, 360))
-        self.color(self.get_random_color())
-        self.goto(self.get_random_position())
-        self.showturtle()
+        self.color(obj.ball_color)
+        self.up()
+        self.max_xcor = SCREEN_WIDTH / 2 - 10
+        self.min_xcor = - SCREEN_WIDTH / 2 + 10
+        self.max_ycor = SCREEN_HEIGHT / 2 - 10
+        self.min_ycor = - SCREEN_HEIGHT / 2 + 10
 
     def move(self):
-        self.fd(1)
+        self.fd(2)
+        if self.xcor() > self.max_xcor and self.ycor() > 0:
+            self.lt(randint(35, 55))
+        if self.xcor() > self.max_xcor and self.ycor() < 0:
+            self.rt(randint(35, 55))
+        if self.xcor() < self.min_xcor and self.ycor() > 0:
+            self.rt(randint(35, 55))
+        if self.xcor() < self.min_xcor and self.ycor() < 0:
+            self.lt(randint(35, 55))
 
-    @staticmethod
-    def get_random_color():
-        return random(), random(), random()
+        if self.ycor() > self.max_ycor and self.xcor() > 0:
+            self.lt(randint(35, 55))
+        if self.ycor() > self.max_ycor and self.xcor() < 0:
+            self.rt(randint(35, 55))
+        if self.ycor() < self.min_ycor and self.xcor() > 0:
+            self.rt(randint(35, 55))
+        if self.ycor() < self.min_ycor and self.xcor() < 0:
+            self.lt(randint(35, 55))
 
-    @staticmethod
-    def get_random_position():
-        return randint(-Window.SCREEN_WIDTH_HALF, Window.SCREEN_WIDTH_HALF),\
-               randint(-Window.SCREEN_HEIGHT_HALF, Window.SCREEN_HEIGHT_HALF)
+
+SCREEN_WIDTH = 600
+SCREEN_HEIGHT = 600
 
 
-class Game:
-    __balls_qty = 0
+def make_window():
+    """Make window and settings"""
+    screen = Screen()
+    screen.bgcolor('black')
+    screen.title('Ball chaos')
+    screen.setup(SCREEN_WIDTH, SCREEN_HEIGHT)
+    screen.onkey(screen.bye, 'Escape')
+    screen.listen()
+    screen.tracer(0)
+    return screen
 
-    def __init__(self, balls_qty: int):
-        Game.__balls_qty = balls_qty
-        self.window = Window()
-        self.balls = self.make_balls(balls_qty)
 
-    def run(self):
-        while True:
-            for ball in self.balls:
-                ball.move()
-                Game.check_border(ball)
-            self.window.canvas.update()
-            if Game.__balls_qty < 40:
-                sleep(0.0001 * Game.__balls_qty)
-            self.check_collision(self.balls)
+def make_balls_data():
+    """Planet data"""
+    ball_1 = BallData((1, 1), 'grey', 'ball_1')
+    ball_2 = BallData((1, 1), 'yellow', 'ball_2')
+    ball_3 = BallData((1, 1), 'red', 'ball_3')
+    ball_4 = BallData((1, 1), 'pink', 'ball_4')
+    ball_5 = BallData((1, 1), 'white', 'ball_5')
+    ball_6 = BallData((1, 1), 'blue', 'ball_6')
+    ball_7 = BallData((1, 1), 'green', 'ball_7')
+    ball_8 = BallData((1, 1), 'orange', 'ball_8')
+    ball_9 = BallData((1, 1), 'purple', 'ball_9')
+    ball_10 = BallData((1, 1), 'red', 'ball_10')
 
-    @staticmethod
-    def check_collision(balls: list[Ball]):
-        for i in range(len(balls)):
-            for j in range(i + 1, len(balls)):
-                if balls[i].distance(balls[j]) < Ball.size:
-                    balls[i].rt(180)
-                    balls[j].rt(180)
+    balls_data = {
+        'ball_1': ball_1,
+        'ball_2': ball_2,
+        'ball_3': ball_3,
+        'ball_4': ball_4,
+        'ball_5': ball_5,
+        'ball_6': ball_6,
+        'ball_7': ball_7,
+        'ball_8': ball_8,
+        'ball_9': ball_9,
+        'ball_10': ball_10,
+    }
+    return balls_data
 
-    @staticmethod
-    def check_border(ball):
-        x = ball.xcor()
-        y = ball.ycor()
 
-        if y < -Window.SCREEN_HEIGHT_HALF or y > Window.SCREEN_HEIGHT_HALF:
-            ball.lt(randint(35, 55))
+def make_balls():
+    """Make balls"""
+    balls_data = make_balls_data()
+    ball_1 = Ball(balls_data['ball_1'])
+    ball_2 = Ball(balls_data['ball_2'])
+    ball_3 = Ball(balls_data['ball_3'])
+    ball_4 = Ball(balls_data['ball_4'])
+    ball_5 = Ball(balls_data['ball_5'])
+    ball_6 = Ball(balls_data['ball_6'])
+    ball_7 = Ball(balls_data['ball_7'])
+    ball_8 = Ball(balls_data['ball_8'])
+    ball_9 = Ball(balls_data['ball_9'])
+    ball_10 = Ball(balls_data['ball_10'])
+    balls_box = [ball_1, ball_2, ball_3, ball_4, ball_5,
+                 ball_6, ball_7, ball_8, ball_9, ball_10]
+    return balls_box
 
-        if x > Window.SCREEN_WIDTH_HALF or x < -Window.SCREEN_WIDTH_HALF:
-            ball.rt(randint(35, 55))
 
-    @staticmethod
-    def make_balls(balls_qty: int):
-        return [Ball() for _ in range(balls_qty)]
+def move_objects(objects):
+    """Move planets and asteroids"""
+    for obj in objects:
+        obj.move()
+
+
+def mainloop():
+    """Mainloop of Ball chaos app"""
+    while True:
+        move_objects(balls)
+        window.update()
+        time.sleep(0.01)
 
 
 if __name__ == '__main__':
-    game = Game(balls_qty=20)
-    game.run()
+    window = make_window()
+    balls = make_balls()
+    mainloop()
