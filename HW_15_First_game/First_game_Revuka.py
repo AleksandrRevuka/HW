@@ -1,6 +1,7 @@
 """Turtle first game"""
 from turtle import *
-from random import randint, random
+from random import randrange, random
+from time import sleep
 
 
 class Sprite(Turtle):
@@ -17,6 +18,7 @@ class Window:
     SCREEN_HEIGHT = 600
     SCREEN_WIDTH_HALF = SCREEN_WIDTH // 2
     SCREEN_HEIGHT_HALF = SCREEN_HEIGHT // 2
+    SCREEN_WIDTH_QUARTER = SCREEN_WIDTH // 4
 
     def __init__(self, screen_title: str = 'Ball chaos'):
         self.canvas = Screen()
@@ -31,21 +33,18 @@ class Window:
 
 
 class Obstacles(Sprite):
-    max_obstacles = Window.SCREEN_HEIGHT_HALF
-    cor_box = [cor.append() for cor in range(25, max_obstacles, 25)]
-
     def __init__(self):
         Sprite.__init__(self)
         self.shape('square')
         self.shapesize(1, 2, 1)
-        self.speed(0)
+        self.speed(0.1)
         self.color(self.get_random_color())
         self.goto(self.get_random_position())
         self.seth(180)
         self.showturtle()
 
     def move_obstacles(self):
-        self.fd(5)
+        self.fd(0.1)
 
     @staticmethod
     def get_random_color():
@@ -53,13 +52,12 @@ class Obstacles(Sprite):
 
     @staticmethod
     def get_random_position():
-        max_obstacles = Window.SCREEN_HEIGHT_HALF
-        cor_box = [cor for cor in range(25, max_obstacles, 25)]
-        return Window.SCREEN_WIDTH_HALF, randint(-Window.SCREEN_HEIGHT_HALF, Window.SCREEN_HEIGHT_HALF)
+        return randrange(Window.SCREEN_WIDTH_QUARTER, Window.SCREEN_WIDTH * Game.complexity, 55),\
+               randrange(-Window.SCREEN_HEIGHT_HALF, Window.SCREEN_HEIGHT, 25)
 
 
 class UserHero(Sprite):
-    _STEP = 20
+    _STEP = 5
 
     def __init__(self):
         Sprite.__init__(self)
@@ -82,15 +80,24 @@ class UserHero(Sprite):
 class Game:
     GAME_OVER = 'Game over!'
     NEXT_LEVEL = 'Next level'
+    complexity = 3
     user_hero = UserHero()
 
     def __init__(self):
         self.window = Window()
 
     def run_game(self):
+        obstacles = [Obstacles() for _ in range(0, Window.SCREEN_HEIGHT//self.complexity)]
+        counter_obstacles = len(obstacles)
+        print(counter_obstacles)
         while True:
             Game.check_user(self.user_hero)
+            for obstacle in obstacles:
+                obstacle.move_obstacles()
             self.window.canvas.update()
+            if counter_obstacles < 100:
+                sleep(0.005 * counter_obstacles)
+            self.check_collision(self.user_hero, obstacles)
 
     @staticmethod
     def check_user(user):
@@ -101,6 +108,12 @@ class Game:
 
         if y > Window.SCREEN_HEIGHT_HALF:
             Game.message(user, Game.NEXT_LEVEL, 'green')
+
+    @staticmethod
+    def check_collision(user_hero, obstacles: list):
+        for i in range(len(obstacles)):
+            if obstacles[i].distance(user_hero) < 30:
+                Game.message(user_hero, Game.GAME_OVER, 'red')
 
     @staticmethod
     def message(user, text, color_text):
