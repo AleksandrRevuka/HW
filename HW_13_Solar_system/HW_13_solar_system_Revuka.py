@@ -1,7 +1,6 @@
 from turtle import *
 from math import *
 import time
-from random import randint
 
 
 class Planet(Turtle):
@@ -14,10 +13,10 @@ class Planet(Turtle):
         self.y = 0
         self.color(planet_color)
         self.up()
-        self.angle = angle
-        self.increase_angle = increase_angle
-        self.radius = radius
         self.star = star
+        self.radius = radius
+        self.increase_angle = increase_angle
+        self.angle = 0
 
     def move(self):
         self.x = self.radius * cos(self.angle)
