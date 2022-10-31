@@ -1,5 +1,6 @@
 """Turtle first game"""
 from turtle import *
+from random import randint, random
 
 
 class Sprite(Turtle):
@@ -27,6 +28,34 @@ class Window:
         self.canvas.onkeypress(lambda: UserHero.move_user_hero_down(), "Down")
         self.canvas.listen()
         self.canvas.tracer(0)
+
+
+class Obstacles(Sprite):
+    max_obstacles = Window.SCREEN_HEIGHT_HALF
+    cor_box = [cor.append() for cor in range(25, max_obstacles, 25)]
+
+    def __init__(self):
+        Sprite.__init__(self)
+        self.shape('square')
+        self.shapesize(1, 2, 1)
+        self.speed(0)
+        self.color(self.get_random_color())
+        self.goto(self.get_random_position())
+        self.seth(180)
+        self.showturtle()
+
+    def move_obstacles(self):
+        self.fd(5)
+
+    @staticmethod
+    def get_random_color():
+        return random(), random(), random()
+
+    @staticmethod
+    def get_random_position():
+        max_obstacles = Window.SCREEN_HEIGHT_HALF
+        cor_box = [cor for cor in range(25, max_obstacles, 25)]
+        return Window.SCREEN_WIDTH_HALF, randint(-Window.SCREEN_HEIGHT_HALF, Window.SCREEN_HEIGHT_HALF)
 
 
 class UserHero(Sprite):
