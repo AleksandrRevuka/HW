@@ -20,10 +20,10 @@ class Planet(Turtle):
 
     def move(self):
         self.goto(self.x, self.y)
-        # self.x = self.radius * cos(self.angle)
-        # self.y = self.radius * sin(self.angle)
-        # self.goto(self.star.xcor() + self.x, self.star.ycor() + self.y)
-        # self.angle += self.increase_angle
+        self.x = self.radius * cos(self.angle)
+        self.y = self.radius * sin(self.angle)
+        self.goto(self.star.xcor() + self.x, self.star.ycor() + self.y)
+        self.angle += self.increase_angle
 
 
 SCREEN_WIDTH = 1600
