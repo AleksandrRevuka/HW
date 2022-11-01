@@ -51,12 +51,13 @@ class Obstacles(Sprite):
 
     @staticmethod
     def get_random_position():
-        return randrange(Window.SCREEN_WIDTH_QUARTER, Window.SCREEN_WIDTH * Game.complexity, 55),\
+        return randrange(Window.SCREEN_WIDTH_QUARTER, Window.SCREEN_WIDTH * complexity, 55),\
                randrange(-Window.SCREEN_HEIGHT_HALF, Window.SCREEN_HEIGHT, 25)
 
 
 class UserHero(Sprite):
-    _STEP = 5
+    """Make hero"""
+    STEP = 5
     size = 25
 
     def __init__(self):
@@ -68,64 +69,72 @@ class UserHero(Sprite):
 
     @staticmethod
     def move_user_hero_up():
-        y = Game.user_hero.ycor() + UserHero._STEP
+        y = Game.user_hero.ycor() + UserHero.STEP
         Game.user_hero.sety(y)
 
     @staticmethod
     def move_user_hero_down():
-        y = Game.user_hero.ycor() - UserHero._STEP
+        y = Game.user_hero.ycor() - UserHero.STEP
         Game.user_hero.sety(y)
 
 
 class Game:
+    """Main controller game"""
     GAME_OVER = 'Game over!'
     NEXT_LEVEL = 'Next level'
-    complexity = 4
     user_hero = UserHero()
 
-    def __init__(self):
+    def __init__(self, level_hard):
         self.window = Window()
+        self.complexity = level_hard
 
     def run_game(self):
         obstacles = [Obstacles() for _ in range(0, Window.SCREEN_HEIGHT//self.complexity)]
         counter_obstacles = len(obstacles)
         print(counter_obstacles)
         while True:
-            Game.check_user(self.user_hero)
+            check_next_level = Game.check_user(self.user_hero)
+            if check_next_level:
+                Game.message(self.user_hero, Game.NEXT_LEVEL, 'green')
+                self.window.canvas.clearscreen()
+                self.complexity -= 1
+                next_game = Game(self.complexity)
+                next_game.run_game()
+
             for obstacle in obstacles:
                 obstacle.move_obstacles()
             self.window.canvas.update()
             if counter_obstacles > 500:
-                sleep(0.0000000001 * counter_obstacles)
-            self.check_collision(self.user_hero, obstacles)
+                sleep(0.00001 * counter_obstacles)
+
+            check_game_over = self.check_collision(self.user_hero, obstacles)
+            if check_game_over:
+                self.window.canvas.clearscreen()
+                Game.message(self.user_hero, Game.GAME_OVER, 'red')
 
     @staticmethod
     def check_user(user):
         y = user.ycor()
-
         if y < -Window.SCREEN_HEIGHT_HALF:
             user.goto(0, -Window.SCREEN_HEIGHT_HALF)
 
         if y > Window.SCREEN_HEIGHT_HALF:
-            Game.message(user, Game.NEXT_LEVEL, 'green')
+            return True
 
     @staticmethod
     def check_collision(user_hero, obstacles: list):
         for i in range(len(obstacles)):
             if obstacles[i].distance(user_hero) < user_hero.size:
-                Game.message(user_hero, Game.GAME_OVER, 'red')
-                for obstacle in obstacles:
-                    obstacle.hideturtle()
+                return True
 
     @staticmethod
     def message(user, text, color_text):
-        user.hideturtle()
-        user.clear()
         user.goto(0, 0)
         user.color(color_text)
         user.write(text, font=("Arial", 12, "bold"))
 
 
 if __name__ == '__main__':
-    game = Game()
+    complexity = 4
+    game = Game(complexity)
     game.run_game()
