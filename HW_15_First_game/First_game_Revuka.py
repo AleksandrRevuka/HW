@@ -23,7 +23,6 @@ class Window:
     def __init__(self, screen_title: str = 'Ball chaos'):
         self.canvas = Screen()
         self.canvas.title(screen_title)
-        # self.canvas.bgcolor('black')
         self.canvas.setup(self.SCREEN_WIDTH, Window.SCREEN_HEIGHT)
         self.canvas.onkey(self.canvas.bye, 'Escape')
         self.canvas.onkeypress(lambda: UserHero.move_user_hero_up(), "Up")
@@ -36,7 +35,7 @@ class Obstacles(Sprite):
     def __init__(self):
         Sprite.__init__(self)
         self.shape('square')
-        self.shapesize(1, 2, 1)
+        self.turtlesize(1, 2, 1)
         self.speed(0.1)
         self.color(self.get_random_color())
         self.goto(self.get_random_position())
@@ -44,7 +43,7 @@ class Obstacles(Sprite):
         self.showturtle()
 
     def move_obstacles(self):
-        self.fd(0.1)
+        self.fd(0.5)
 
     @staticmethod
     def get_random_color():
@@ -58,6 +57,7 @@ class Obstacles(Sprite):
 
 class UserHero(Sprite):
     _STEP = 5
+    size = 25
 
     def __init__(self):
         Sprite.__init__(self)
@@ -80,7 +80,7 @@ class UserHero(Sprite):
 class Game:
     GAME_OVER = 'Game over!'
     NEXT_LEVEL = 'Next level'
-    complexity = 3
+    complexity = 4
     user_hero = UserHero()
 
     def __init__(self):
@@ -95,8 +95,8 @@ class Game:
             for obstacle in obstacles:
                 obstacle.move_obstacles()
             self.window.canvas.update()
-            if counter_obstacles < 100:
-                sleep(0.005 * counter_obstacles)
+            if counter_obstacles > 500:
+                sleep(0.0000000001 * counter_obstacles)
             self.check_collision(self.user_hero, obstacles)
 
     @staticmethod
@@ -112,12 +112,15 @@ class Game:
     @staticmethod
     def check_collision(user_hero, obstacles: list):
         for i in range(len(obstacles)):
-            if obstacles[i].distance(user_hero) < 30:
+            if obstacles[i].distance(user_hero) < user_hero.size:
                 Game.message(user_hero, Game.GAME_OVER, 'red')
+                for obstacle in obstacles:
+                    obstacle.hideturtle()
 
     @staticmethod
     def message(user, text, color_text):
         user.hideturtle()
+        user.clear()
         user.goto(0, 0)
         user.color(color_text)
         user.write(text, font=("Arial", 12, "bold"))
