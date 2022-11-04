@@ -39,11 +39,11 @@ class Interface(Frame, Label, Style):
         backspace = Button(self, text="⇐", command=lambda: self.del_last_number())
         backspace.grid(row=1, column=3)
 
-        one_x = Button(self, text="1/x", command=lambda: self.add_to_display('1/x'))
+        one_x = Button(self, text="")
         one_x.grid(row=2, column=0)
-        degree = Button(self, text="x²", command=lambda: self.add_to_display('x2'))
+        degree = Button(self, text="(", command=lambda: self.add_to_display('('))
         degree.grid(row=2, column=1)
-        square_root = Button(self, text="√x", command=lambda: self.add_to_display('√x'))
+        square_root = Button(self, text=")", command=lambda: self.add_to_display(')'))
         square_root.grid(row=2, column=2)
         divide = Button(self, text="÷", command=lambda: self.add_to_display('/'))
         divide.grid(row=2, column=3)
@@ -75,7 +75,7 @@ class Interface(Frame, Label, Style):
         plus = Button(self, text="+", command=lambda: self.add_to_display('+'))
         plus.grid(row=5, column=3)
 
-        negative = Button(self, text="∓", command=lambda: self.abs())
+        negative = Button(self, text="∓")
         negative.grid(row=6, column=0)
         zero = Button(self, text="0", command=lambda: self.add_to_display('0'))
         zero.grid(row=6, column=1)
@@ -95,18 +95,6 @@ class Interface(Frame, Label, Style):
         Interface.display_label += number
         print(Interface.display_label)
 
-    @staticmethod
-    def abs():
-        number = ''
-        while len(Interface.display_label):
-            if Interface.display_label[:0].isdigit():
-                number = Interface.display_label[:0] + number
-                del Interface.display_label[:0]
-            else:
-                break
-        number = Interface.display_label + '-' + number
-        print(number)
-        # return add_to_display(abs(number))
 
 def main():
     root = Tk()
