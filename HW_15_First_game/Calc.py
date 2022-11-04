@@ -1,5 +1,6 @@
 from tkinter import Tk, W, E
 from tkinter.ttk import Frame, Button, Entry, Style
+from multipledispatch import dispatch
 
 
 class Interface(Frame, Tk):
@@ -82,10 +83,12 @@ class Interface(Frame, Tk):
         equals.grid(row=6, column=3)
 
         self.pack()
+        self.bind_class('Button', '<1>', callback)
 
-
-# class CalculatorLogic(Interface):
-#     def __int__(self):
+class Concatenate:
+    @dispatch()
+    def add(self, x, y):
+        if
 
 
 def main():
