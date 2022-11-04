@@ -2,17 +2,7 @@ from tkinter import *
 
 
 def callback(e):
-   k = []
-   j = e.widget['text']
-   k.append(j)
-   if j == 'c':
-      k.clear()
-   return k
-
-
-def operation(data):
-   for i in data:
-      if i.isdigit
+   print(e)
 
 
 root = Tk()
