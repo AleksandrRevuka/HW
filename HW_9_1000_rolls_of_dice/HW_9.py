@@ -37,6 +37,7 @@ def chance_drop_dice(data, math_chance, number_rolls):
         chance = round(100 / number_rolls * value[1], 2)
         expected_value = math_chance[counter]
         box_chance = SumDice(dice, number_of_dice_rolled, chance, expected_value)
+        print(box_chance)
         box_drop_chance.append(box_chance)
     return box_drop_chance
 
