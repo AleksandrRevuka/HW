@@ -16,6 +16,7 @@ class PersonTable(NamedTuple):
 
 
 class PrintPersons:
+    """Print persons"""
     def __init__(self, persons, person):
         self.person = person
         self.persons = persons
@@ -49,18 +50,21 @@ def check_exist_type_file(filename: str):
 
 
 def read_and_make_data_persons(data_file):
+    """Read and make data persons"""
     with open(data_file, encoding="utf-8") as file:
         data_persons = []
         for line in file:
-            e = line.split(' ')
+            parameters = line.split(' ')
             number_person, first_name, last_name, patronymic_name, age, id_pas, weight = \
-                int(e[0]), e[1], e[2], e[3], int(e[4]), e[5], float(e[6])
+                int(parameters[0]), parameters[1], parameters[2], parameters[3], int(parameters[4]), \
+                parameters[5], float(parameters[6])
             person = PersonTable(number_person, first_name, last_name, patronymic_name, age, id_pas, weight)
             data_persons.append(person)
     return data_persons
 
 
 def main(data_persons_file):
+    """Main controller"""
     check_exist_type_file(data_persons_file)
     data_persons = read_and_make_data_persons(data_persons_file)
     e = PrintPersons(data_persons, 0)
@@ -69,5 +73,5 @@ def main(data_persons_file):
 
 if __name__ == '__main__':
     current_dir = os.getcwd()
-    data = os.path.join(current_dir, 'elements.txt')
+    data = os.path.join(current_dir, 'data_persons.txt')
     main(data)
