@@ -7,13 +7,10 @@ import re
 
 class PersonTable(NamedTuple):
     """Type class for person"""
-    number_person: int
-    first_name: str
-    last_name: str
-    patronymic_name: str
-    age: int
+    full_name: str
+    age: int | str
     id: str
-    weight: float
+    weight: float | str
 
 
 class PrintPersons:
@@ -22,80 +19,80 @@ class PrintPersons:
         self.person = person
         self.persons = persons
         self.persons_table = PrettyTable()
-        self.persons_table.field_names = ["Humber person", "First name", "Last name",
-                                          "Patronymic Name", "Age", "ID", "Weight"]
+        self.persons_table.field_names = ["Full name", "Age", "ID", "Weight"]
 
     def print_persons(self):
         for person in self.persons:
-            self.persons_table.add_row([person.number_person, person.first_name, person.last_name,
-                                        person.patronymic_name, person.age, person.id, person.weight])
+            self.persons_table.add_row([person.full_name, person.age, person.id, person.weight])
         print(self.persons_table)
 
     def print_person(self):
-        self.persons_table.add_row([self.persons[self.person].number_person, self.persons[self.person].first_name,
-                                    self.persons[self.person].last_name, self.persons[self.person].patronymic_name,
+        self.persons_table.add_row([self.persons[self.person].full_name,
                                     self.persons[self.person].age, self.persons[self.person].id,
                                     self.persons[self.person].weight])
         print(self.persons_table)
 
 
 class Person:
-    def __init__(self, number_person, first_name, last_name, patronymic_name, age, id_pas, weight):
-        self._number_person = number_person
-        self._first_name = first_name
-        self._last_name = last_name
-        self._patronymic_name = patronymic_name
-        self._age = age
-        self._id_pas = id_pas
-        self._weight = weight
+    def __init__(self, full_name, age, id_pas, weight):
+        self.__full_name = full_name
+        self.__age = age
+        self.__id_pas = id_pas
+        self.__weight = weight
 
     @property
-    def number_person(self):
-        return self._number_person
+    def full_name(self):
+        return self.__full_name
 
-    @number_person.setter
-    def number_person(self, number_person):
-        if int:
-            self._number_person = number_person
-            print(f'Successfully changed to: {number_person}')
+    @full_name.setter
+    def full_name(self, full_name):
+        if re.findall(r'(^[аА-яЯ]{2,15})\s([аА-яЯ]{2,15})\s([аА-яЯ]{2,15})$', full_name):
+            self.__full_name = full_name
+            print(f'Successfully changed full name to: {full_name}')
         else:
-            print(f'{number_person} Invalid number, try again!')
-
-    @property
-    def first_name(self):
-        return self._first_name
-
-    @first_name.setter
-    def first_name(self, first_name):
-        if re.findall(r'()', first_name):
-            self._first_name = first_name
-            print(f'Successfully changed to: {first_name}')
-        else:
-            print(f'{first_name} Invalid first name, try again!')
+            print(f'Invalid full name: {full_name}, try again!')
 
     @property
     def age(self):
-        return self._age
+        return self.__age
 
     @age.setter
     def age(self, age):
-        if 16 < age < 66:
-            self._age = age
-            print(f'Successfully changed to: {age}')
+        if age.isdigit() and 16 < int(age) < 66:
+            self.__age = age
+            print(f'Successfully changed age to: {age}')
         else:
-            print(f'{age} Invalid age, try again!')
+            print(f'Invalid age: {age}, try again!')
+
+    @property
+    def id_pass(self):
+        return self.__id_pas
+
+    @id_pass.setter
+    def id_pass(self, id_pas):
+        if re.findall(r'^[A-Z-]{2}[0-9]{6}$', id_pas):
+            self.__id_pas = id_pas
+            print(f'Successfully changed ID to: {id_pas}')
+        else:
+            print(f'Invalid ID: {id_pas}, try again!')
 
     @property
     def weight(self):
-        return self._weight
+        return self.__weight
 
     @weight.setter
     def weight(self, weight):
-        if 40 < float(weight) < 130:
-            self._weight = weight
-            print(f'Successfully changed to: {weight}')
+        if weight.isdigit() and 40 < float(weight) < 130:
+            self.__weight = weight
+            print(f'Successfully changed weight to: {weight}')
         else:
-            print(f'{weight} Invalid weight, try again!')
+            print(f'Invalid weight: {weight}, try again!')
+
+    def print_info(self):
+        print(f'ФИО: {self.__full_name} Возраст: {self.__age} '
+              f'Паспорт: {self.__id_pas} Вес: {self.__weight}')
+        person = PersonTable(self.__full_name, self.__age, self.__id_pas, self.__weight)
+        return person
 
 
 def check_exist_type_file(filename: str):
@@ -114,11 +111,17 @@ def read_and_make_data_persons(data_file):
     with open(data_file, encoding="utf-8") as file:
         data_persons = []
         for line in file:
-            parameters = line.split(' ')
-            number_person, first_name, last_name, patronymic_name, age, id_pas, weight = \
-                int(parameters[0]), parameters[1], parameters[2], parameters[3], int(parameters[4]), \
-                parameters[5], float(parameters[6])
-            person = PersonTable(number_person, first_name, last_name, patronymic_name, age, id_pas, weight)
+            full_name = re.findall(r'^([аА-яЯ]{2,15})\s([аА-яЯ]{2,15})\s([аА-яЯ]{2,15})', line)
+            age = re.findall(r'[0-9]{2}', line)
+            id_pas = re.findall(r'[A-Z]{2}-[0-9]{6}', line)
+            weight = re.findall(r'[0-9]{2}.[0-9]{1,2}$', line)
+            if not all((full_name, age, id_pas, weight)):
+                raise ValueError('Wrong data in data_persons.txt')
+            full_name = full_name.pop()
+            age = age.pop()
+            id_pas = id_pas.pop()
+            weight = weight.pop()
+            person = PersonTable(full_name, age, id_pas, weight)
             data_persons.append(person)
     return data_persons
 
@@ -129,6 +132,17 @@ def main(data_persons_file):
     data_persons = read_and_make_data_persons(data_persons_file)
     e = PrintPersons(data_persons, 0)
     PrintPersons.print_persons(e)
+    full_name = 'Иванов Иван Ивановичь'
+    age = '100'
+    id_pas = 'AA-111111'
+    weight = '99.99'
+    person_1 = Person(full_name, age, id_pas, weight)
+    person_1.print_info()
+    person_1.full_name = 'Белюга Татьяна Сергеевна'
+    person_1.age = '44'
+    person_1.id_pass = "FF-999999"
+    person_1.weight = '111'
+    person_1.print_info()
 
 
 if __name__ == '__main__':
