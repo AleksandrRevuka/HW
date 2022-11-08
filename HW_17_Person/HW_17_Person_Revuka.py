@@ -2,6 +2,7 @@
 from typing import NamedTuple
 from prettytable import PrettyTable
 import os
+import re
 
 
 class PersonTable(NamedTuple):
@@ -36,6 +37,65 @@ class PrintPersons:
                                     self.persons[self.person].age, self.persons[self.person].id,
                                     self.persons[self.person].weight])
         print(self.persons_table)
+
+
+class Person:
+    def __init__(self, number_person, first_name, last_name, patronymic_name, age, id_pas, weight):
+        self._number_person = number_person
+        self._first_name = first_name
+        self._last_name = last_name
+        self._patronymic_name = patronymic_name
+        self._age = age
+        self._id_pas = id_pas
+        self._weight = weight
+
+    @property
+    def number_person(self):
+        return self._number_person
+
+    @number_person.setter
+    def number_person(self, number_person):
+        if int:
+            self._number_person = number_person
+            print(f'Successfully changed to: {number_person}')
+        else:
+            print(f'{number_person} Invalid number, try again!')
+
+    @property
+    def first_name(self):
+        return self._first_name
+
+    @first_name.setter
+    def first_name(self, first_name):
+        if re.findall(r'()', first_name):
+            self._first_name = first_name
+            print(f'Successfully changed to: {first_name}')
+        else:
+            print(f'{first_name} Invalid first name, try again!')
+
+    @property
+    def age(self):
+        return self._age
+
+    @age.setter
+    def age(self, age):
+        if 16 < age < 66:
+            self._age = age
+            print(f'Successfully changed to: {age}')
+        else:
+            print(f'{age} Invalid age, try again!')
+
+    @property
+    def weight(self):
+        return self._weight
+
+    @weight.setter
+    def weight(self, weight):
+        if 40 < float(weight) < 130:
+            self._weight = weight
+            print(f'Successfully changed to: {weight}')
+        else:
+            print(f'{weight} Invalid weight, try again!')
 
 
 def check_exist_type_file(filename: str):
