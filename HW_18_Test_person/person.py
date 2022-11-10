@@ -119,6 +119,3 @@ class PersonVerify:
 if __name__ == '__main__':
     person_data = PersonData('Иванов Иван Иванович', 36, 'ВР-415141', 101.3)
     person = Person(person_data)
-    print(person.full_name)
-    person.full_name = 'Петров Петр Петрович'
-    print(person.full_name)
