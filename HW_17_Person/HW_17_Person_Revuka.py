@@ -77,12 +77,13 @@ class Person:
             print(f'Invalid ID: {id_pas}, try again!')
 
     @property
-    def weight(self):
+    def weight(self):pip install coverage
+
         return self.__weight
 
     @weight.setter
     def weight(self, weight):
-        if 40 < float(weight) < 130:
+        if weight.replace('.', '', 1).isdigit() and 40 <= float(weight) <= 130:
             self.__weight = weight
             print(f'Successfully changed weight to: {weight}')
         else:
