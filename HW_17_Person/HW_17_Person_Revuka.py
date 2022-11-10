@@ -77,8 +77,7 @@ class Person:
             print(f'Invalid ID: {id_pas}, try again!')
 
     @property
-    def weight(self):pip install coverage
-
+    def weight(self):
         return self.__weight
 
     @weight.setter
