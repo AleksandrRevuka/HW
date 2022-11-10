@@ -65,7 +65,7 @@ class PersonVerify:
     LETTERS = ascii_letters + RUS + RUS.upper()
     AGE_RANGE = range(16, 66)
     WEIGHT_RANGE = range(50, 120)
-    CARD_FORMAT = re.compile(r'\w{2}-\d{6}')
+    CARD_FORMAT = re.compile(r'^\w{2}-\d{6}$')
 
     @classmethod
     def verify_all(cls, data: PersonData):
