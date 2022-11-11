@@ -51,11 +51,13 @@ class TestPerson(unittest.TestCase):
         self.assertEqual(self.person.age, 40)
 
     def test_verify_age(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError) as error:
             self.person.age = 99.0
+        self.assertEqual('Age must be an integer', error.exception.args[0])
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError)as error:
             self.person.age = 10
+        self.assertEqual('Age must be between 16 and 65', error.exception.args[0])
 
     def test_id_card(self):
         self.assertEqual(self.person.id_card, 'AA-123456')
@@ -65,11 +67,13 @@ class TestPerson(unittest.TestCase):
         self.assertEqual(self.person.id_card, 'ZZ-654321')
 
     def test_verify_id_card(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError) as error:
             self.person.id_card = 12
+        self.assertEqual('Invalid data type for card id', error.exception.args[0])
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as error:
             self.person.id_card = 'KK654321'
+        self.assertEqual('Invalid card id data format XX-XXXXXX', error.exception.args[0])
 
     def test_weight(self):
         self.assertEqual(self.person.weight, 100.0)
@@ -79,11 +83,13 @@ class TestPerson(unittest.TestCase):
         self.assertEqual(self.person.weight, 90.0)
 
     def test_verify_weight(self):
-        with self.assertRaises(TypeError):
+        with self.assertRaises(TypeError)as error:
             self.person.weight = 65
+        self.assertEqual('Weight must be an float number', error.exception.args[0])
 
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValueError) as error:
             self.person.weight = 150.0
+        self.assertEqual('Weight should be between 50 and 119', error.exception.args[0])
 
     def test__str__(self):
         self.assertEqual(self.person.__str__(), 'Иванов Иван Иванович')
