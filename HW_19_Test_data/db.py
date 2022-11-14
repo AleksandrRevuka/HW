@@ -176,7 +176,7 @@ class PersonVerify:
 
         with subprocess.Popen(["ping", "-n", "1", host], stdout=subprocess.PIPE) as ping:
             if 'Заданный узел недоступен' in ping.stdout.read().decode('cp866'):
-                raise DataBaseException(f'{host} is not avaliable')
+                raise DataBaseException(f'{host} is not available')
             ping.kill()
 
     @classmethod
@@ -194,4 +194,3 @@ class PersonVerify:
 if __name__ == '__main__':
     database_one_dto = DataBaseDTO('postgres', 'user', 'qwertyR1!', '127.0.0.1', '5001')
     database_one = DataBase(database_one_dto)
-    database_one.user = 'root'
