@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from io import StringIO
 
-from HW_19_Test_data.db import DataBase, DataBaseDTO, DataBaseException
+from Homework.HW_19_Test_data.db import DataBase, DataBaseDTO, DataBaseException
 
 
 class TestDataBaseException(unittest.TestCase):
