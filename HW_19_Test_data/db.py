@@ -194,3 +194,4 @@ class PersonVerify:
 if __name__ == '__main__':
     database_one_dto = DataBaseDTO('postgres', 'user', 'qwertyR1!', '127.0.0.1', '5001')
     database_one = DataBase(database_one_dto)
+    database_one.user = 'root'

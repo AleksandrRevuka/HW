@@ -1,8 +1,9 @@
 import unittest
 from unittest.mock import patch
 from io import StringIO
+import warnings
 
-from Homework.HW_19_Test_data.db import DataBase, DataBaseDTO
+from Homework.HW_19_Test_data.db import DataBase, DataBaseDTO, DataBaseException
 
 
 class TestDataBaseException(unittest.TestCase):
@@ -79,6 +80,18 @@ class TestDataBaseException(unittest.TestCase):
         with self.assertRaises(ValueError) as context_not_value:
             self.database_one.db_name = ' '
         self.assertTrue('Empty string in values' in str(context_not_value.exception))
+
+        with self.assertRaises(DataBaseException) as context_wrong_value:
+            self.database_one.db_name = 'wrong'
+        self.assertTrue(f'Unsupported DB: {"wrong"}. Use these names: {self.database_one.databases}'
+                        in str(context_wrong_value.exception))
+
+    def test_with_wrong_user(self):
+        with self.assertWarns(UserWarning) as context_user_root:
+            self.database_one.user = 'root'
+        self.assertTrue("Use root user is dangerous" in str(context_user_root.warning))
+
+
 
     def reset_database(self):
         self.person = DataBase(self.database_one_dto)
