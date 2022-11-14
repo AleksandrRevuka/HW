@@ -71,7 +71,14 @@ class TestDataBaseException(unittest.TestCase):
 
         self.reset_database()
 
-    def test_with_wrong_database(self):
+    def test_with_wrong_db_name(self):
+        with self.assertRaises(TypeError) as context_not_string:
+            self.database_one.db_name = 23456
+        self.assertTrue(f'{23456} must be a string' in str(context_not_string.exception))
+
+        with self.assertRaises(ValueError) as context_not_value:
+            self.database_one.db_name = ' '
+        self.assertTrue('Empty string in values' in str(context_not_value.exception))
 
     def reset_database(self):
         self.person = DataBase(self.database_one_dto)
