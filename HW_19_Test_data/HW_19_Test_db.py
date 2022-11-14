@@ -56,3 +56,20 @@ class TestDataBaseException(unittest.TestCase):
         self.assertEqual(self.database_one.host, self.database_one_dto.host)
         self.assertEqual(self.database_one.port, self.database_one_dto.port)
 
+    def test_set_values(self):
+        self.database_one.db_name = 'mysql'
+        self.database_one.user = 'user_1'
+        self.database_one.password = 'qazedc1A#'
+        self.database_one.host = '8.8.8.8'
+        self.database_one.port = '12111'
+
+        self.assertEqual(self.database_one.db_name, 'mysql')
+        self.assertEqual(self.database_one.user, 'user_1')
+        self.assertEqual(self.database_one.password, 'qazedc1A#')
+        self.assertEqual(self.database_one.host, '8.8.8.8')
+        self.assertEqual(self.database_one.port, '12111')
+
+        self.reset_database()
+
+    def reset_database(self):
+        self.person = DataBase(self.database_one_dto)
