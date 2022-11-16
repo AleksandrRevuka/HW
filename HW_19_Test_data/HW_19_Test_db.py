@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch
-from io import StringIO
+import io
 
 from Homework.HW_19_Test_data.db import DataBase, DataBaseDTO, DataBaseException
 
@@ -18,33 +18,37 @@ class TestDataBaseException(unittest.TestCase):
     def tearDown(self) -> None:
         del self.database_one
 
-    def test__del__(self):
+    def test_delete_database_instance(self):
         self.database_one.__del__()
-        self.assertEqual(self.database_one.instance(), None)
+        self.assertEqual(DataBase.instance(), None)
 
-    def test__enter__(self):
-        self.assertEqual(self.database_one.__enter__(), self.database_one)
+    def test_singleton_database_pattern(self):
+        data_mysql = DataBaseDTO('mysql', 'user', 'qwertyR1!', '127.0.0.1', '5001')
+        data_postgres = DataBaseDTO('postgres', 'user', 'qwertyR1!', '127.0.0.1', '5001')
 
-    def test__exit__(self):
-        with patch('sys.stdout', new=StringIO()) as fake_out:
-            self.database_one.__exit__(self.exc_type, self.exc_val, self.exc_tb)
-            self.assertTrue(f'Close connect to DB: {self.database_one.db_name}' in fake_out.getvalue())
+        database_mysql = DataBase(data_mysql)
+        database_postgres = DataBase(data_postgres)
 
-    def test_action_print(self):
-        with patch('sys.stdout', new=StringIO()) as fake_out:
+        self.assertEqual(id(database_mysql), id(database_postgres))
+
+    def test_connect(self):
+        with patch('sys.stdout', new=io.StringIO()) as fake_out:
             self.database_one.connect()
             self.assertTrue(f'Connect to DB: {self.database_one.db_name}' in fake_out.getvalue())
 
-        with patch('sys.stdout', new=StringIO()) as fake_out:
+    def test_close_connect(self):
+        with patch('sys.stdout', new=io.StringIO()) as fake_out:
             self.database_one.close()
             self.assertTrue(f'Close connect to DB: {self.database_one.db_name}' in fake_out.getvalue())
 
-        with patch('sys.stdout', new=StringIO()) as fake_out:
+    def test_read_data(self):
+        with patch('sys.stdout', new=io.StringIO()) as fake_out:
             self.database_one.read(self.table)
             self.assertTrue(f'Read data from database: {self.database_one.db_name} from table: {self.table}'
                             in fake_out.getvalue())
 
-        with patch('sys.stdout', new=StringIO()) as fake_out:
+    def test_write(self):
+        with patch('sys.stdout', new=io.StringIO()) as fake_out:
             self.database_one.write(self.table, self.data)
             self.assertTrue(f'Write {self.data} to DB: {self.database_one.db_name} table: {self.table}'
                             in fake_out.getvalue())
@@ -92,34 +96,17 @@ class TestDataBaseException(unittest.TestCase):
 
     def test_with_wrong_password(self):
         with self.assertRaises(DataBaseException) as context_wrong_password:
-            self.database_one.password = 'Admin#1'
-        self.assertTrue('Password must be at least 8 chars include Upper, Lower, Digit, Punctuation'
-                        in str(context_wrong_password.exception))
-
-        with self.assertRaises(DataBaseException) as context_wrong_password:
-            self.database_one.password = 'Admin_#one'
-        self.assertTrue('Password must be at least 8 chars include Upper, Lower, Digit, Punctuation'
-                        in str(context_wrong_password.exception))
-
-        with self.assertRaises(DataBaseException) as context_wrong_password:
-            self.database_one.password = 'admin_#1'
-        self.assertTrue('Password must be at least 8 chars include Upper, Lower, Digit, Punctuation'
-                        in str(context_wrong_password.exception))
-
-        with self.assertRaises(DataBaseException) as context_wrong_password:
-            self.database_one.password = 'ADMIN_#1'
-        self.assertTrue('Password must be at least 8 chars include Upper, Lower, Digit, Punctuation'
-                        in str(context_wrong_password.exception))
-
-        with self.assertRaises(DataBaseException) as context_wrong_password:
-            self.database_one.password = 'Adminnuber1'
+            passwords = ['Admin#1', 'Admin_#one', 'admin_#1', 'ADMIN_#1', 'Adminnuber1']
+            for password in passwords:
+                self.database_one.password = password
         self.assertTrue('Password must be at least 8 chars include Upper, Lower, Digit, Punctuation'
                         in str(context_wrong_password.exception))
 
     def test_with_wrong_host(self):
         with self.assertRaises(DataBaseException) as context_wrong_host:
-            self.database_one.host = '127.0.0'
-        self.assertTrue("'127.0.0' does not appear to be an IPv4 or IPv6 address" in str(context_wrong_host.exception))
+            self.database_one.host = '127.0.0.876'
+        self.assertTrue("\'127.0.0.876\' does not appear to be an IPv4 or IPv6 address"
+                        in str(context_wrong_host.exception))
 
         with self.assertRaises(DataBaseException) as context_not_available_host:
             self.database_one.host = '192.168.88.99'
@@ -137,6 +124,14 @@ class TestDataBaseException(unittest.TestCase):
         with self.assertRaises(DataBaseException) as context_max_port:
             self.database_one.port = '66000'
         self.assertEqual(f'Port must be between 0-65000', str(context_max_port.exception))
+
+    def test_database_context(self):
+        with patch('sys.stdout', new=io.StringIO()) as fake_out:
+            with DataBase(self.database_one_dto) as db:
+                db.write('Owner', 'Some data')
+            self.assertEqual(fake_out.getvalue(), 'Connect to DB: postgres\n'
+                                                  'Write Some data to DB: postgres table: Owner\n'
+                                                  'Close connect to DB: postgres\n')
 
     def reset_database(self):
         self.person = DataBase(self.database_one_dto)
