@@ -1,16 +1,18 @@
 import pytest
-from unittest.mock import patch
-import io
 
 from Homework.HW_19_Test_data.db import DataBase, DataBaseDTO, DataBaseException
 
 
 class TestDataBaseException:
-    def setup(self) -> None:
+    def setup_method(self) -> None:
         self.database_one_dto = DataBaseDTO('postgres', 'user', 'qwertyR1!', '127.0.0.1', '5001')
         self.database_one = DataBase(self.database_one_dto)
-        self.table = 'table_12'
-        self.data = 'Hello World'
+        self.table = 'table_1'
+        self.data = 'Some data'
+
+    def teardown_method(self) -> None:
+        del self.database_one
+        del self.database_one_dto
 
     def test_singleton_database_pattern(self):
         data_mysql = DataBaseDTO('mysql', 'user', 'qwertyR1!', '127.0.0.1', '5001')
@@ -21,26 +23,26 @@ class TestDataBaseException:
 
         assert id(database_mysql) == id(database_postgres)
 
-    def test_connect(self):
-        with patch('sys.stdout', new=io.StringIO()) as fake_out:
-            self.database_one.connect()
-        assert f'Connect to DB: {self.database_one.db_name}' in fake_out.getvalue()
+    def test_delete_database_instance(self):
+        self.database_one.__del__()
+        assert DataBase.instance() is None
 
-    def test_close_connect(self):
-        with patch('sys.stdout', new=io.StringIO()) as fake_out:
-            self.database_one.close()
-        assert f'Close connect to DB: {self.database_one.db_name}' in fake_out.getvalue()
+    def test_connect(self, capfd):
+        self.database_one.connect()
+        assert capfd.readouterr().out == f'Connect to DB: {self.database_one.db_name}\n'
 
-    def test_read_data(self):
-        with patch('sys.stdout', new=io.StringIO()) as fake_out:
-            self.database_one.read(self.table)
-        assert f'Read data from database: {self.database_one.db_name} from table: {self.table}' \
-               in fake_out.getvalue()
+    def test_close_connect(self, capfd):
+        self.database_one.close()
+        assert capfd.readouterr().out == f'Close connect to DB: {self.database_one.db_name}\n'
 
-    def test_write(self):
-        with patch('sys.stdout', new=io.StringIO()) as fake_out:
-            self.database_one.write(self.table, self.data)
-        assert f'Write {self.data} to DB: {self.database_one.db_name} table: {self.table}' in fake_out.getvalue()
+    def test_read_data(self, capfd):
+        self.database_one.read(self.table)
+        assert capfd.readouterr().out == f'Read data from database: {self.database_one.db_name} ' \
+                                         f'from table: {self.table}\n'
+
+    def test_write(self, capfd):
+        self.database_one.write(self.table, self.data)
+        assert capfd.readouterr().out == f'Write {self.data} to DB: {self.database_one.db_name} table: {self.table}\n'
 
     def test_normal_data(self):
         assert self.database_one.db_name == self.database_one_dto.db_name
@@ -112,13 +114,12 @@ class TestDataBaseException:
             self.database_one.port = '66000'
         assert f'Port must be between 0-65000' in str(context_max_port.value)
 
-    def test_database_context(self):
-        with patch('sys.stdout', new=io.StringIO()) as fake_out:
-            with DataBase(self.database_one_dto) as db:
-                db.write('Owner', 'Some data')
-            assert fake_out.getvalue() in 'Connect to DB: postgres\n'\
-                                          'Write Some data to DB: postgres table: Owner\n'\
-                                          'Close connect to DB: postgres\n'
+    def test_database_context(self, capfd):
+        with DataBase(self.database_one_dto) as db:
+            db.write('Owner', 'Some data')
+        assert capfd.readouterr().out == 'Connect to DB: postgres\n'\
+                                         'Write Some data to DB: postgres table: Owner\n'\
+                                         'Close connect to DB: postgres\n'
 
     def reset_database(self):
         self.person = DataBase(self.database_one_dto)
