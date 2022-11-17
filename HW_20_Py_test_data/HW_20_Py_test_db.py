@@ -89,48 +89,46 @@ class TestDataBaseException(pytest):
                == str(context_wrong_value.value)
 
     def test_with_wrong_user(self):
-        with self.assertWarns(UserWarning) as context_user_root:
+        with pytest.warns(Warning, match="Use root user is dangerous"):
             self.database_one.user = 'root'
-        self.assertTrue("Use root user is dangerous" in str(context_user_root.warning))
 
     def test_with_wrong_password(self):
-        with self.assertRaises(DataBaseException) as context_wrong_password:
+        with pytest.raises(DataBaseException) as context_wrong_password:
             passwords = ['Admin#1', 'Admin_#one', 'admin_#1', 'ADMIN_#1', 'Adminnuber1']
             for password in passwords:
                 self.database_one.password = password
-        self.assertTrue('Password must be at least 8 chars include Upper, Lower, Digit, Punctuation'
-                        in str(context_wrong_password.exception))
+        assert 'Password must be at least 8 chars include Upper, Lower, Digit, Punctuation' \
+               == str(context_wrong_password.value)
 
     def test_with_wrong_host(self):
-        with self.assertRaises(DataBaseException) as context_wrong_host:
+        with pytest.raises(DataBaseException) as context_wrong_host:
             self.database_one.host = '127.0.0.876'
-        self.assertTrue("\'127.0.0.876\' does not appear to be an IPv4 or IPv6 address"
-                        in str(context_wrong_host.exception))
+        assert "\'127.0.0.876\' does not appear to be an IPv4 or IPv6 address" == str(context_wrong_host.value)
 
-        with self.assertRaises(DataBaseException) as context_not_available_host:
+        with pytest.raises(DataBaseException) as context_not_available_host:
             self.database_one.host = '192.168.88.99'
-        self.assertTrue("192.168.88.99 is not available" in str(context_not_available_host.exception))
+        assert "192.168.88.99 is not available" == str(context_not_available_host.value)
 
     def test_with_wrong_port(self):
-        with self.assertRaises(DataBaseException) as context_wrong_port:
+        with pytest.raises(DataBaseException) as context_wrong_port:
             self.database_one.port = 'number_port'
-        self.assertEqual('Port must contains numbers not number_port', str(context_wrong_port.exception))
+        assert 'Port must contains numbers not number_port' == str(context_wrong_port.value)
 
-        with self.assertRaises(DataBaseException) as context_negative_port:
+        with pytest.raises(DataBaseException) as context_negative_port:
             self.database_one.port = '0'
-        self.assertEqual(f'Port must be between 0-65000', str(context_negative_port.exception))
+        assert f'Port must be between 0-65000' == str(context_negative_port.value)
 
-        with self.assertRaises(DataBaseException) as context_max_port:
+        with pytest.raises(DataBaseException) as context_max_port:
             self.database_one.port = '66000'
-        self.assertEqual(f'Port must be between 0-65000', str(context_max_port.exception))
+        assert f'Port must be between 0-65000', str(context_max_port.value)
 
     def test_database_context(self):
         with patch('sys.stdout', new=io.StringIO()) as fake_out:
             with DataBase(self.database_one_dto) as db:
                 db.write('Owner', 'Some data')
-            self.assertEqual(fake_out.getvalue(), 'Connect to DB: postgres\n'
-                                                  'Write Some data to DB: postgres table: Owner\n'
-                                                  'Close connect to DB: postgres\n')
+            assert fake_out.getvalue() == 'Connect to DB: postgres\n'\
+                                          'Write Some data to DB: postgres table: Owner\n'\
+                                          'Close connect to DB: postgres\n'
 
     def reset_database(self):
         self.person = DataBase(self.database_one_dto)
