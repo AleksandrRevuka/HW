@@ -5,15 +5,6 @@ import io
 from Homework.HW_19_Test_data.db import DataBase, DataBaseDTO, DataBaseException
 
 
-database_one_dto = DataBaseDTO('postgres', 'user', 'qwertyR1!', '127.0.0.1', '5001')
-database_one = DataBase(database_one_dto)
-table = 'table_12'
-data = 'Hello World'
-exc_type = 'str'
-exc_val = '200'
-exc_tb = 'table_1'
-
-
 # def test_delete_database_instance():
 #     database_one.__del__()
 #     assert DataBase.instance is None
@@ -40,12 +31,15 @@ def test_close_connect():
 
 
 def test_read_data():
+    table = 'table_12'
     with patch('sys.stdout', new=io.StringIO()) as fake_out:
         database_one.read(table)
     assert f'Read data from database: {database_one.db_name} from table: {table}' in fake_out.getvalue()
 
 
 def test_write():
+    table = 'table_12'
+    data = 'Hello World'
     with patch('sys.stdout', new=io.StringIO()) as fake_out:
         database_one.write(table, data)
     assert f'Write {data} to DB: {database_one.db_name} table: {table}' in fake_out.getvalue()
@@ -142,4 +136,6 @@ def reset_database():
 
 
 if __name__ == '__main__':
+    database_one_dto = DataBaseDTO('postgres', 'user', 'qwertyR1!', '127.0.0.1', '5001')
+    database_one = DataBase(database_one_dto)
     pytest.main()

@@ -11,9 +11,6 @@ class TestDataBaseException(pytest):
         self.database_one = DataBase(self.database_one_dto)
         self.table = 'table_12'
         self.data = 'Hello World'
-        self.exc_type = 'str'
-        self.exc_val = '200'
-        self.exc_tb = 'table_1'
 
     def teardown(self) -> None:
         del self.database_one
