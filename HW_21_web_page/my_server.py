@@ -3,27 +3,25 @@ import socket
 
 def first_server():
     server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server.bind(('127.0.88.1', 5010))
     server.listen()
-
     while True:
         print('Working...')
-        client, client_addres = server.accept()
-        print(f'Connection from {client_addres}')
+        client_socket, client_address = server.accept()
+        data = client_socket.recv(1024).decode('utf-8')
+        load_page(data)
 
-        while True:
-            print('Before .recv()')
-            request = client.recv(4096)
 
-            if not request:
-                client.close()
-                break
-
-            response = f'Hello, {client_addres}'.encode()
-            client.send(response)
-
-        print('Out of .recv()')
+def load_page(request_data):
+    HDRS = 'HTTP/1.1 200 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n'
+    HDRS_404 = 'HTTP/1.1 404 OK\r\nContent-Type: text/html; charset=utf-8\r\n\r\n'
+    path = request_data.split(' ')[1]
+    try:
+        with open('my_page' + path, 'rb') as file:
+            response = file.read()
+        return HDRS.encode('utf-8') + response
+    except EOFError:
+        return HDRS_404.encode('utf-8')
 
 
 if __name__ == '__main__':
