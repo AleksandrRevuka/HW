@@ -76,4 +76,3 @@ if __name__ == '__main__':
     current_dir = os.getcwd()
     all_text = os.path.join(current_dir, 'english_text.txt')
     main(all_text)
-#     sdd
